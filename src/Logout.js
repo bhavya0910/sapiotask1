@@ -2,7 +2,8 @@ import react,{useState} from 'react';
 import { BrowserRouter, Route,Switch, useHistory } from 'react-router-dom'
 
 const Log=()=>{
-  const[isAuth,setIsAuth] = useState(false);
+    sessionStorage.removeItem('user');
+  
   const [user,setuser]   =useState({
     
     username : "",
@@ -38,7 +39,7 @@ const Log=()=>{
               
           
          sessionStorage.setItem('user',JSON.stringify(newrecords))
-        
+         
          history.push("/Home");
 
 

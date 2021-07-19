@@ -1,86 +1,78 @@
-import React,{useState, useEffect} from "react"
-import Button from "@material-ui/core/Button";
+import React,{useState,useEffect} from "react"
 import { useSelector } from 'react-redux';
-import "../index.css";
-import { makeStyles } from '@material-ui/core/styles';
-import ImageList from '@material-ui/core/ImageList';
-import ImageListItem from '@material-ui/core/ImageListItem';
-import ImageListItemBar from '@material-ui/core/ImageListItemBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
+import Card from "../cards/card";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
-  },
-  imageList: {
-    width: 500,
-    height: 450,
-  },
-  icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
-  },
-}));
+import Grid from '@material-ui/core/Grid';
 
 
+const Country = () => {
 
-const Countries = (props) => {
-  
-  
+    const countrydata = useSelector((state) => state.countries);
+    const count = countrydata.map((obj) => ({...obj,liked: false}) );
+      sessionStorage.setItem("country",JSON.stringify(count))
 
-    const localcountryVal = useSelector((state) => state.countries);
-    sessionStorage.setItem("homedata",JSON.stringify(localcountryVal));
+    
+    
 
-    const home = JSON.parse(sessionStorage.getItem("homedata"));
 
-    const [likeCountry,setLikeCountry] = useState([{countryName: "",countryFlag: ""}])
+    var getcountry = JSON.parse(sessionStorage.getItem("country"));
 
-    useEffect(()=>{sessionStorage.setItem("likedata",JSON.stringify(likeCountry))
-   
+    const [likeCountry,setLikeCountry] = useState([])
+
+    useEffect(()=>{
+    
+      
+      
+      if(likeCountry.length>1)
+        { var new1 = [...likeCountry];
+        
+         sessionStorage.setItem("likedata",JSON.stringify(new1));}
+      
  },[likeCountry])
- 
+
+ const sLiked = (img,name) => {
+    const x = JSON.parse(sessionStorage.getItem("country"));
+    const y = x.map((obj) => obj.name===name ? {...obj,liked: true}:obj);
+   
+    sessionStorage.setItem("country",JSON.stringify(y));
+    
+    setLikeCountry([...likeCountry,{countryName: name,countryFlag: img}])
+ } 
+
+ const sDisLiked = (img,name) => {
+   const x = JSON.parse(sessionStorage.getItem("country"));
+   const y = x.map((obj) => obj.name===name ? {...obj,liked: false}:obj);
+  
+   sessionStorage.setItem("country",JSON.stringify(y));
+   
+   let indexDisLiked = -1;
+   likeCountry.forEach((country,index) => {
+      if(country.countryName === name)
+      {
+         indexDisLiked = index;
+      
+         return;
+      }
+   });
+   const newLike = likeCountry;
+   newLike.splice(indexDisLiked,1);
+   setLikeCountry(newLike);
+   
+  if(likeCountry.length>=1)
+   {var newLiked = [...likeCountry];
+  
+   sessionStorage.setItem("likedata",JSON.stringify(newLiked));}
+
+ }
+
     return(
-    <>
-<div >
-      <h2>List of all Countries</h2>
-      <hr />
-
-      <div className="productsContainer">
-        {home.map((country) => (
-          <div>
-           
-           <img src={country.flag} alt="flag" />
-           
-           <h1>{country.name}</h1>
-           
-          <Button onClick={(e) => {
-             e.preventDefault();
-             setLikeCountry([...likeCountry,{countryName: country.name,countryFlag: country.flag}])
-             
-
-           }} >Like</Button>
-           
-          
-           </div>
-          
-       
-           
-          
-
-        ))}
-      </div>
-      </div>
-      
-      
-      
-    
-    
-        </>)
+     <div >
+      <Grid container spacing={3}>  
+      {getcountry.map((country,index)=> (<Grid key={index} item xs={3}>
+        <Card key={country.name}   name={country.name} img={country.flag} likeState={country.liked} setLike={sLiked} setDisLike={sDisLiked} />
+        </Grid>))}
+      </Grid>
+        </div>)
 }
 
-export default Countries;
+export default Country;

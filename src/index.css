@@ -230,13 +230,10 @@ body {
   margin: 0.5em 0;
 }
 
-
-Button:focus{
-  background : purple !important;
- 
-}
-
-
- Button.hover{
+Button.hover{
   color: darkblue;
+}
+.card {
+  min-height: 400px;
+ min-width: 300px;
 }
